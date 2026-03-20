@@ -17,7 +17,7 @@ const BEAD_STEP = BEAD_W + 4;
 
 const POST_W = 8;
 const LEFT_POST_X = 2;
-const RIGHT_POST_X = SVG_W - 52;
+const RIGHT_POST_X = SVG_W - 70;
 const ROD_X1 = LEFT_POST_X + POST_W;
 const ROD_X2 = RIGHT_POST_X;
 
