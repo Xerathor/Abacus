@@ -39,7 +39,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased h-full">
         {children}
 
         {/* Register service worker for PWA / offline support */}
