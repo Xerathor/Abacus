@@ -84,7 +84,7 @@ export default function Home() {
       )}
 
       {/* ── Abacus (fills all remaining space) ──────────────────────────── */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden w-full h-full">
         {activeTab === "russian" ? (
           <AbacusRussian
             rows={rows}

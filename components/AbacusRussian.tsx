@@ -6,18 +6,18 @@ import { ROW_CONFIG } from "@/lib/abacus";
 import { playBeadClick } from "@/lib/audio";
 
 // ─── SVG layout constants ─────────────────────────────────────────────────────
-const SVG_W = 580;
+const SVG_W = 620;
 const ROW_H = 48;
-const SVG_H = ROW_H * ROW_CONFIG.length; // 528
+const SVG_H = ROW_H * ROW_CONFIG.length;
 
-const BEAD_W = 28;   // bead rectangle width
-const BEAD_H = 30;   // bead rectangle height
-const BEAD_RX = 6;   // corner radius
-const BEAD_STEP = BEAD_W + 4; // 32 px between bead centres
+const BEAD_W = 28;
+const BEAD_H = 30;
+const BEAD_RX = 6;
+const BEAD_STEP = BEAD_W + 4;
 
 const POST_W = 8;
-const LEFT_POST_X = 44;
-const RIGHT_POST_X = SVG_W - LEFT_POST_X - POST_W - 52;
+const LEFT_POST_X = 2;
+const RIGHT_POST_X = SVG_W - 52;
 const ROD_X1 = LEFT_POST_X + POST_W;
 const ROD_X2 = RIGHT_POST_X;
 
@@ -179,7 +179,7 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
         height="100%"
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="none"
         className="touch-none"
         aria-label="Русские счёты — интерактивный симулятор"
         tabIndex={0}
@@ -230,7 +230,7 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
 
               {/* Label */}
               <text
-                x={SVG_W - 6} y={cy}
+                x={SVG_W - 2} y={cy}
                 textAnchor="end" dominantBaseline="middle"
                 fill={leftCount > 0 ? "#1e40af" : "#6b7f94"}
                 fontSize={isQuarterRow ? 12 : 11}
