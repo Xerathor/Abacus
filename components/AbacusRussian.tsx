@@ -173,7 +173,12 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
   }, [rows, sound, onSetRow]);
 
   return (
-    <div className="w-full h-full select-none">
+    <div className="w-full h-full select-none" style={{
+      padding: "2% 0",
+      borderTop: "1.5px solid #a0b4c8",
+      borderBottom: "1.5px solid #a0b4c8",
+      boxSizing: "border-box",
+    }}>
       <svg
         ref={svgRef}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
