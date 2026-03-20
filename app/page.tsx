@@ -66,83 +66,68 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-dvh bg-gradient-to-b from-slate-100 to-slate-200 flex flex-col">
-      {/* ── Header / Tab bar ─────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+    <main className="h-dvh bg-[#b8c8d8] flex flex-col overflow-hidden">
 
-          {/* Tabs */}
-          <nav className="flex gap-1 bg-slate-100 rounded-xl p-1" role="tablist">
-            {(["russian", "soroban"] as const).map((tab) => (
-              <button
-                key={tab}
-                role="tab"
-                aria-selected={activeTab === tab}
-                onClick={() => setTab(tab)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200
-                  ${
-                    activeTab === tab
-                      ? "bg-white text-blue-700 shadow-sm font-semibold"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
-              >
-                {tab === "russian" ? "Русские счёты" : "Соробан"}
-              </button>
-            ))}
-          </nav>
+      {/* ── Display strip (top) ──────────────────────────────────────────── */}
+      {activeTab === "russian" && (
+        <Display
+          value={value}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          soundEnabled={soundEnabled}
+          onSetValue={setValue}
+          onUndo={undo}
+          onRedo={redo}
+          onReset={reset}
+          onToggleSound={toggleSound}
+        />
+      )}
 
-          {/* Rules button */}
-          <button
-            onClick={() => setRulesOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl
-                       text-slate-600 hover:text-blue-700 hover:bg-blue-50
-                       transition-colors text-sm font-medium border border-slate-200 hover:border-blue-200"
-            aria-label="Открыть правила"
-          >
-            <BookOpen size={15} />
-            <span className="hidden sm:inline">Правила</span>
-          </button>
-        </div>
-      </header>
-
-      {/* ── Main content ─────────────────────────────────────────────────── */}
-      <div className="flex-1 max-w-2xl w-full mx-auto px-3 py-4 flex flex-col gap-0">
-
+      {/* ── Abacus (fills all remaining space) ──────────────────────────── */}
+      <div className="flex-1 overflow-hidden">
         {activeTab === "russian" ? (
-          <>
-            {/* Digital display */}
-            <Display
-              value={value}
-              canUndo={canUndo}
-              canRedo={canRedo}
-              soundEnabled={soundEnabled}
-              onSetValue={setValue}
-              onUndo={undo}
-              onRedo={redo}
-              onReset={reset}
-              onToggleSound={toggleSound}
-            />
-
-            {/* Abacus */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <AbacusRussian
-                rows={rows}
-                soundEnabled={soundEnabled}
-                onSetRow={setRow}
-              />
-            </div>
-
-            {/* Footer hint */}
-            <p className="text-center text-slate-400 text-xs mt-3 px-4">
-              Свайп ← добавить бусину · Свайп → убрать · ↑↓ переключить спицу (клавиатура)
-            </p>
-          </>
+          <AbacusRussian
+            rows={rows}
+            soundEnabled={soundEnabled}
+            onSetRow={setRow}
+          />
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <AbacusSoroban />
-          </div>
+          <AbacusSoroban />
         )}
       </div>
+
+      {/* ── Bottom toolbar ───────────────────────────────────────────────── */}
+      <nav className="flex items-center justify-between px-4 h-11 bg-slate-800/90 backdrop-blur-sm border-t border-slate-700 shrink-0">
+        {/* Tabs */}
+        <div className="flex gap-1 bg-slate-700/60 rounded-lg p-0.5" role="tablist">
+          {(["russian", "soroban"] as const).map((tab) => (
+            <button
+              key={tab}
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => setTab(tab)}
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-200
+                ${activeTab === tab
+                  ? "bg-slate-600 text-white shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
+                }`}
+            >
+              {tab === "russian" ? "Русские счёты" : "Соробан"}
+            </button>
+          ))}
+        </div>
+
+        {/* Rules button */}
+        <button
+          onClick={() => setRulesOpen(true)}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-slate-400
+                     hover:text-white hover:bg-white/10 transition-colors text-xs"
+          aria-label="Открыть правила"
+        >
+          <BookOpen size={13} />
+          <span>Правила</span>
+        </button>
+      </nav>
 
       {/* ── Modals / overlays ─────────────────────────────────────────────── */}
       <RulesModal

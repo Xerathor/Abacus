@@ -10,24 +10,21 @@ const SVG_W = 580;
 const ROW_H = 48;
 const SVG_H = ROW_H * ROW_CONFIG.length; // 528
 
-const BEAD_R = 15;
-const BEAD_STEP = BEAD_R * 2 + 4; // 34 px between bead centres
+const BEAD_W = 28;   // bead rectangle width
+const BEAD_H = 30;   // bead rectangle height
+const BEAD_RX = 6;   // corner radius
+const BEAD_STEP = BEAD_W + 4; // 32 px between bead centres
 
 const POST_W = 8;
 const LEFT_POST_X = 44;
-const RIGHT_POST_X = SVG_W - LEFT_POST_X - POST_W - 52; // 476  (space for labels on right)
-const ROD_X1 = LEFT_POST_X + POST_W;                    // 52
-const ROD_X2 = RIGHT_POST_X;                            // 476
+const RIGHT_POST_X = SVG_W - LEFT_POST_X - POST_W - 52;
+const ROD_X1 = LEFT_POST_X + POST_W;
+const ROD_X2 = RIGHT_POST_X;
 
-// Leftmost possible centre for an active bead
-const ACTIVE_ORIGIN = ROD_X1 + 2 + BEAD_R; // 69
-// Rightmost possible centre for an inactive bead
-const INACTIVE_ORIGIN = ROD_X2 - 2 - BEAD_R; // 459
+const ACTIVE_ORIGIN = ROD_X1 + 2 + BEAD_W / 2;
+const INACTIVE_ORIGIN = ROD_X2 - 2 - BEAD_W / 2;
 
-// Beads 4 & 5 (0-indexed) in 10-bead rows are visually highlighted
 const HIGHLIGHT_SET = new Set([4, 5]);
-
-// Spring physics for bead animation
 const SPRING = { type: "spring", stiffness: 520, damping: 28, mass: 0.25 } as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -40,11 +37,9 @@ function rowY(rowIndex: number): number {
 /** X-centre of bead at beadIndex, given leftCount and totalBeads for this row */
 function beadCX(beadIndex: number, leftCount: number, totalBeads: number): number {
   if (beadIndex < leftCount) {
-    // Active — packed from the left
     return ACTIVE_ORIGIN + beadIndex * BEAD_STEP;
   } else {
-    // Inactive — packed from the right
-    const j = totalBeads - 1 - beadIndex; // 0 = rightmost bead
+    const j = totalBeads - 1 - beadIndex;
     return INACTIVE_ORIGIN - j * BEAD_STEP;
   }
 }
@@ -78,7 +73,7 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
       let hit = -1;
       for (let i = 0; i < totalBeads; i++) {
         const cx = beadCX(i, currentLeft, totalBeads);
-        if (Math.abs(svgX - cx) <= BEAD_R + 4) {
+        if (Math.abs(svgX - cx) <= BEAD_W / 2 + 4) {
           hit = i;
           break;
         }
@@ -177,13 +172,14 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
     return () => svg.removeEventListener("keydown", onKey);
   }, [rows, sound, onSetRow]);
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="w-full select-none">
+    <div className="w-full h-full select-none">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
         className="touch-none"
         aria-label="Русские счёты — интерактивный симулятор"
         tabIndex={0}
@@ -196,30 +192,16 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
           width={RIGHT_POST_X + POST_W - LEFT_POST_X}
           height={SVG_H}
           rx={6}
-          fill="#f1f5f9"
-          stroke="#e2e8f0"
+          fill="#c8d8e8"
+          stroke="#a0b4c8"
           strokeWidth={1.5}
         />
 
         {/* ── Left post ────────────────────────────────────────────── */}
-        <rect
-          x={LEFT_POST_X}
-          y={0}
-          width={POST_W}
-          height={SVG_H}
-          rx={3}
-          fill="#334155"
-        />
+        <rect x={LEFT_POST_X} y={0} width={POST_W} height={SVG_H} rx={3} fill="#2d3f52" />
 
         {/* ── Right post ───────────────────────────────────────────── */}
-        <rect
-          x={RIGHT_POST_X}
-          y={0}
-          width={POST_W}
-          height={SVG_H}
-          rx={3}
-          fill="#334155"
-        />
+        <rect x={RIGHT_POST_X} y={0} width={POST_W} height={SVG_H} rx={3} fill="#2d3f52" />
 
         {/* ── Rows ─────────────────────────────────────────────────── */}
         {ROW_CONFIG.map((cfg, ri) => {
@@ -229,36 +211,28 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
 
           return (
             <g key={ri} role="group" aria-label={`Ряд ×${cfg.multiplier}, активно ${leftCount} из ${cfg.totalBeads}`}>
-              {/* Horizontal divider between rows */}
+              {/* Divider */}
               {ri < ROW_CONFIG.length - 1 && (
                 <line
-                  x1={LEFT_POST_X + POST_W}
-                  y1={cy + ROW_H / 2}
-                  x2={RIGHT_POST_X}
-                  y2={cy + ROW_H / 2}
-                  stroke="#e2e8f0"
-                  strokeWidth={1}
+                  x1={LEFT_POST_X + POST_W} y1={cy + ROW_H / 2}
+                  x2={RIGHT_POST_X} y2={cy + ROW_H / 2}
+                  stroke="#a0b4c8" strokeWidth={1}
                 />
               )}
 
               {/* Rod */}
               <line
-                x1={ROD_X1}
-                y1={cy}
-                x2={ROD_X2}
-                y2={cy}
-                stroke={isQuarterRow ? "#94a3b8" : "#94a3b8"}
+                x1={ROD_X1} y1={cy} x2={ROD_X2} y2={cy}
+                stroke="#6b7f94"
                 strokeWidth={isQuarterRow ? 2.5 : 3}
                 strokeLinecap="round"
               />
 
-              {/* Label (right of frame) */}
+              {/* Label */}
               <text
-                x={SVG_W - 6}
-                y={cy}
-                textAnchor="end"
-                dominantBaseline="middle"
-                fill={leftCount > 0 ? "#3b82f6" : "#94a3b8"}
+                x={SVG_W - 6} y={cy}
+                textAnchor="end" dominantBaseline="middle"
+                fill={leftCount > 0 ? "#1e40af" : "#6b7f94"}
                 fontSize={isQuarterRow ? 12 : 11}
                 fontFamily="system-ui, sans-serif"
                 fontWeight={leftCount > 0 ? 600 : 400}
@@ -267,65 +241,50 @@ export function AbacusRussian({ rows, soundEnabled, onSetRow }: Props) {
                 {cfg.label}
               </text>
 
-              {/* Invisible hit-area rect for swipe/tap detection */}
+              {/* Hit area */}
               <rect
-                x={ROD_X1}
-                y={cy - ROW_H / 2}
-                width={ROD_X2 - ROD_X1}
-                height={ROW_H}
+                x={ROD_X1} y={cy - ROW_H / 2}
+                width={ROD_X2 - ROD_X1} height={ROW_H}
                 fill="transparent"
                 style={{ cursor: "ew-resize", touchAction: "none" }}
                 onPointerDown={(e) => handlePointerDown(e, ri)}
                 onPointerUp={(e) => handlePointerUp(e, ri)}
               />
 
-              {/* Beads */}
+              {/* Beads — rounded rectangles */}
               {Array.from({ length: cfg.totalBeads }, (_, bi) => {
                 const isActive = bi < leftCount;
                 const isHighlighted = !isQuarterRow && HIGHLIGHT_SET.has(bi);
                 const cx = beadCX(bi, leftCount, cfg.totalBeads);
 
-                // Colour system
                 let fill: string;
                 let stroke: string;
                 if (isActive) {
-                  fill = isHighlighted ? "#1d4ed8" : "#3b82f6";
-                  stroke = "#1e3a8a";
+                  fill = isHighlighted ? "#1e3a5f" : "#2d4a6e";
+                  stroke = "#1a2f45";
                 } else {
-                  fill = isHighlighted ? "#94a3b8" : "#cbd5e1";
-                  stroke = "#94a3b8";
+                  fill = isHighlighted ? "#5a6e82" : "#7a8fa3";
+                  stroke = "#4a5e72";
                 }
 
                 return (
-                  <motion.circle
+                  <motion.rect
                     key={bi}
-                    cy={cy}
-                    r={BEAD_R}
-                    initial={{ cx }}
-                    animate={{ cx }}
+                    y={cy - BEAD_H / 2}
+                    width={BEAD_W}
+                    height={BEAD_H}
+                    rx={BEAD_RX}
+                    initial={{ x: cx - BEAD_W / 2 }}
+                    animate={{ x: cx - BEAD_W / 2 }}
                     transition={SPRING}
                     fill={fill}
                     stroke={stroke}
                     strokeWidth={1}
-                    // Pointer events handled by the rect overlay; beads are visual-only
                     style={{ pointerEvents: "none" }}
                     aria-label={`Бусина ${bi + 1}: ${isActive ? "активна" : "неактивна"}`}
                   />
                 );
               })}
-
-              {/* Quarter-row visual cue: thicker rod section */}
-              {isQuarterRow && (
-                <rect
-                  x={ACTIVE_ORIGIN + 4 * BEAD_STEP - BEAD_R}
-                  y={cy - 1.5}
-                  width={INACTIVE_ORIGIN - (ACTIVE_ORIGIN + 4 * BEAD_STEP - BEAD_R)}
-                  height={3}
-                  fill="#3b82f6"
-                  opacity={0.25}
-                  style={{ pointerEvents: "none" }}
-                />
-              )}
             </g>
           );
         })}

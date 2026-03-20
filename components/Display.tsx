@@ -66,10 +66,10 @@ export function Display({
   const iconBtnDisabled = "opacity-25 cursor-not-allowed pointer-events-none";
 
   return (
-    <div className="rounded-xl bg-slate-800 px-5 py-4 shadow-inner border border-slate-700 mb-4">
+    <div className="bg-slate-800 border-b border-slate-700 px-3 py-1.5 flex items-center gap-2 shrink-0">
       {/* ── Number display ───────────────────────────────────────── */}
       <div
-        className="text-center min-h-[3.5rem] flex items-center justify-center cursor-text group"
+        className="flex-1 flex items-center justify-center cursor-text min-w-0"
         onClick={!editing ? startEdit : undefined}
         title="Нажмите, чтобы ввести число"
         aria-label={`Значение: ${value}. Нажмите для ввода.`}
@@ -84,8 +84,8 @@ export function Display({
             onChange={(e) => setInputVal(e.target.value)}
             onBlur={commitEdit}
             onKeyDown={handleKeyDown}
-            className="bg-transparent text-white text-4xl sm:text-5xl font-display tracking-widest
-                       text-center w-full outline-none border-b-2 border-blue-400 pb-1
+            className="bg-transparent text-white text-2xl font-display tracking-widest
+                       text-center w-full outline-none border-b border-blue-400
                        placeholder-slate-500"
             inputMode="decimal"
             autoFocus
@@ -94,86 +94,33 @@ export function Display({
           />
         ) : (
           <span
-            className="text-white font-display tracking-widest text-4xl sm:text-5xl
-                       group-hover:text-blue-200 transition-colors duration-200"
+            className="text-white font-display tracking-widest text-2xl hover:text-blue-200 transition-colors"
             style={{ fontVariantNumeric: "tabular-nums" }}
           >
-            {value === 0 ? (
-              <span className="text-slate-500">0</span>
-            ) : (
-              formatValue(value)
-            )}
+            {value === 0 ? <span className="text-slate-500">0</span> : formatValue(value)}
           </span>
         )}
       </div>
 
-      {/* ── Controls row ─────────────────────────────────────────── */}
-      <div className="flex items-center justify-center gap-1 mt-3">
-        {/* Undo */}
-        <button
-          onClick={onUndo}
-          disabled={!canUndo}
-          className={`${iconBtn} ${!canUndo ? iconBtnDisabled : ""}`}
-          aria-label="Отменить"
-          title="Отменить (Ctrl+Z)"
-        >
-          <RotateCcw size={16} />
+      {/* ── Controls ─────────────────────────────────────────────── */}
+      <div className="flex items-center gap-0.5 shrink-0">
+        <button onClick={onUndo} disabled={!canUndo} className={`${iconBtn} ${!canUndo ? iconBtnDisabled : ""}`} aria-label="Отменить" title="Ctrl+Z">
+          <RotateCcw size={14} />
         </button>
-
-        {/* Redo */}
-        <button
-          onClick={onRedo}
-          disabled={!canRedo}
-          className={`${iconBtn} ${!canRedo ? iconBtnDisabled : ""}`}
-          aria-label="Повторить"
-          title="Повторить (Ctrl+Y)"
-        >
-          <RotateCw size={16} />
+        <button onClick={onRedo} disabled={!canRedo} className={`${iconBtn} ${!canRedo ? iconBtnDisabled : ""}`} aria-label="Повторить" title="Ctrl+Y">
+          <RotateCw size={14} />
         </button>
-
-        <div className="w-px h-5 bg-slate-600 mx-1" />
-
-        {/* Reset */}
-        <button
-          onClick={onReset}
-          className={iconBtn}
-          aria-label="Сброс в ноль"
-          title="Сбросить счёты"
-        >
-          <Trash2 size={16} />
+        <div className="w-px h-4 bg-slate-600 mx-0.5" />
+        <button onClick={onReset} className={iconBtn} aria-label="Сброс" title="Сбросить">
+          <Trash2 size={14} />
         </button>
-
-        {/* Sound toggle */}
-        <button
-          onClick={onToggleSound}
-          className={iconBtn}
-          aria-label={soundEnabled ? "Выключить звук" : "Включить звук"}
-          title={soundEnabled ? "Звук включён" : "Звук выключен"}
-        >
-          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+        <button onClick={onToggleSound} className={iconBtn} aria-label={soundEnabled ? "Выкл звук" : "Вкл звук"}>
+          {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
         </button>
-
-        {/* Copy */}
-        <button
-          onClick={handleCopy}
-          className={iconBtn}
-          aria-label="Скопировать число"
-          title="Скопировать в буфер обмена"
-        >
-          {copied ? (
-            <Check size={16} className="text-green-400" />
-          ) : (
-            <Copy size={16} />
-          )}
+        <button onClick={handleCopy} className={iconBtn} aria-label="Копировать">
+          {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
         </button>
       </div>
-
-      {/* Hint */}
-      {!editing && (
-        <p className="text-center text-slate-500 text-xs mt-2">
-          Нажмите на число, чтобы ввести вручную
-        </p>
-      )}
     </div>
   );
 }
